@@ -65,21 +65,41 @@ export const Dashboard: React.FC = () => {
   const [salesDistribution, setSalesDistribution] = useState<SalesCategory[] | null>(null);
   const [topProducts, setTopProducts] = useState<TopProduct[] | null>(null);
   const [revenueData, setRevenueData] = useState<revenueOverview[]>([]);
+  const [recentInvoices, setRecentInvoices] = useState<any[]>([]);
 
-  const recentInvoices = [
-    { id: "INV-001", customer: "Acme Corp", amount: "₹45,000", status: "Paid", date: "2024-10-25" },
-    { id: "INV-002", customer: "TechStart Inc", amount: "₹32,500", status: "Pending", date: "2024-10-24" },
-    { id: "INV-003", customer: "Global Enterprises", amount: "₹67,800", status: "Paid", date: "2024-10-23" },
-    { id: "INV-004", customer: "Smart Solutions", amount: "₹28,900", status: "Overdue", date: "2024-10-20" },
-    { id: "INV-005", customer: "Digital Wave", amount: "₹51,200", status: "Paid", date: "2024-10-19" }
-  ];
+
+
+
 
   useEffect(() => {
     handleStats();
     handleRevenueOverview();
     handleSalesDistribution();
     handleTopProduct();
+     handleRecentInvoices();
   }, [])
+
+
+
+const handleRecentInvoices = async () => {
+  try {
+    console.log("Fetching recent invoices...");
+    const response = await api.get<any[]>("/api/invoices", token);
+    if (Array.isArray(response)) { 
+      const latestInvoices = response
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice(0, 5);
+
+      setRecentInvoices(latestInvoices);
+    } else {
+      console.warn("No invoices found or response is not an array");
+      setRecentInvoices([]);
+    }
+  } catch (error) {
+    console.error("Error fetching invoices:", error);
+  }
+};
+
 
   const handleStats = async () => {
     try {
@@ -367,44 +387,58 @@ export const Dashboard: React.FC = () => {
 
       {/* Tables Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Invoices */}
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200">
-            <h3 className="text-lg font-semibold text-slate-900">Recent Invoices</h3>
-            <p className="text-sm text-slate-500 mt-1">Latest billing transactions</p>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-slate-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Invoice</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Customer</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Amount</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200">
-                {recentInvoices.map((invoice) => (
-                  <tr key={invoice.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 text-sm font-medium text-slate-900">{invoice.id}</td>
-                    <td className="px-6 py-4 text-sm text-slate-600">{invoice.customer}</td>
-                    <td className="px-6 py-4 text-sm font-semibold text-slate-900">{invoice.amount}</td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium ${getStatusColor(invoice.status)}`}>
-                        {invoice.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="px-6 py-4 border-t border-slate-200 bg-slate-50">
-            <button className="text-sm font-medium text-emerald-600 hover:text-emerald-700">
-              View all invoices →
-            </button>
-          </div>
-        </div>
+        
+{/* Recent Invoices Section */}
+<div className="bg-white rounded-xl border border-slate-200 p-6">
+  <div className="flex items-center justify-between mb-6">
+    <h3 className="text-lg font-semibold text-slate-900">Recent Invoices</h3>
+    <p className="text-sm text-slate-500">Latest 5 invoices</p>
+  </div>
+
+  {recentInvoices.length > 0 ? (
+    <div className="overflow-x-auto">
+      <table className="min-w-full border border-slate-200 rounded-lg">
+        <thead className="bg-slate-100">
+          <tr>
+            <th className="px-4 py-2 text-left text-sm font-medium text-slate-700">Invoice #</th>
+            <th className="px-4 py-2 text-left text-sm font-medium text-slate-700">Party</th>
+            <th className="px-4 py-2 text-left text-sm font-medium text-slate-700">Date</th>
+            <th className="px-4 py-2 text-left text-sm font-medium text-slate-700">Total</th>
+            <th className="px-4 py-2 text-left text-sm font-medium text-slate-700">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {recentInvoices.map((invoice) => (
+            <tr key={invoice.id} className="border-t border-slate-200 hover:bg-slate-50">
+              <td className="px-4 py-2 text-sm text-slate-900">{invoice.invoice_number}</td>
+              <td className="px-4 py-2 text-sm text-slate-600">{invoice.party_name}</td>
+              <td className="px-4 py-2 text-sm text-slate-600">
+                {new Date(invoice.invoice_date).toLocaleDateString("en-IN")}
+              </td>
+              <td className="px-4 py-2 text-sm text-slate-900 font-medium">₹{invoice.total_amount}</td>
+              <td className="px-4 py-2">
+                <span
+                  className={`px-2 py-1 text-xs font-medium rounded-full ${
+                    invoice.status === "paid"
+                      ? "bg-emerald-100 text-emerald-700"
+                      : invoice.status === "sent"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-slate-100 text-slate-700"
+                  }`}
+                >
+                  {invoice.status}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ) : (
+    <p className="text-sm text-slate-500">No recent invoices found.</p>
+  )}
+</div>
+
 
         {/* Top Products */}
         <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
@@ -431,9 +465,6 @@ export const Dashboard: React.FC = () => {
                 </div>
               ))}
               <div className="px-6 py-4 border-t border-slate-200 bg-slate-50">
-                <button className="text-sm font-medium text-emerald-600 hover:text-emerald-700">
-                  View all products →
-                </button>
               </div>
             </div>
           ) : (
