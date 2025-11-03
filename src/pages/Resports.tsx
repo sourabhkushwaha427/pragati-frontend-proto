@@ -95,43 +95,43 @@ export const Reports: React.FC = () => {
         </div> */}
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-slate-500 font-medium">Total Sales</h3>
-            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
-              <TrendingUp size={20} />
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-slate-500 font-medium">Total Sales</h3>
+              <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                <TrendingUp size={20} />
+              </div>
             </div>
+            <p className="text-3xl font-bold text-slate-900">₹{totalSales.toLocaleString()}</p>
+            <p className="text-sm text-emerald-500 mt-1">+{growth}% compared to last period</p>
           </div>
-          <p className="text-3xl font-bold text-slate-900">${totalSales.toLocaleString()}</p>
-          <p className="text-sm text-emerald-500 mt-1">+{growth}% compared to last period</p>
-        </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-slate-500 font-medium">Total Purchases</h3>
-            <div className="p-2 bg-cyan-50 text-cyan-600 rounded-lg">
-              <ShoppingCart size={20} />
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-slate-500 font-medium">Total Purchases</h3>
+              <div className="p-2 bg-cyan-50 text-cyan-600 rounded-lg">
+                <ShoppingCart size={20} />
+              </div>
             </div>
+            <p className="text-3xl font-bold text-slate-900">₹{totalPurchases.toLocaleString()}</p>
+            <p className="text-sm text-cyan-500 mt-1">Steady purchasing activity</p>
           </div>
-          <p className="text-3xl font-bold text-slate-900">${totalPurchases.toLocaleString()}</p>
-          <p className="text-sm text-cyan-500 mt-1">Steady purchasing activity</p>
-        </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-slate-500 font-medium">Net Profit</h3>
-            <div className="p-2 bg-teal-50 text-teal-600 rounded-lg">
-              <BarChart3 size={20} />
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-slate-500 font-medium">Net Profit</h3>
+              <div className="p-2 bg-teal-50 text-teal-600 rounded-lg">
+                <BarChart3 size={20} />
+              </div>
             </div>
+            <p className="text-3xl font-bold text-slate-900">
+              ₹{(totalSales - totalPurchases).toLocaleString()}
+            </p>
+            <p className="text-sm text-teal-500 mt-1">Profit margin {(growth / 2).toFixed(1)}%</p>
           </div>
-          <p className="text-3xl font-bold text-slate-900">
-            ${(totalSales - totalPurchases).toLocaleString()}
-          </p>
-          <p className="text-sm text-teal-500 mt-1">Profit margin {(growth / 2).toFixed(1)}%</p>
         </div>
-      </div>
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
